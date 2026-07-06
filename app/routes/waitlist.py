@@ -5,6 +5,9 @@ from app.database import get_db
 from app.schemas import WaitlistCreate
 from app.models import Waitlist
 from app import crud
+from fastapi import Depends
+from app.security import verify_admin
+
 
 router = APIRouter(
     prefix="/waitlist",
@@ -38,16 +41,11 @@ def join(
         "id": user.id
     }
 
-
 @router.get("/")
 def get_waitlist(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: None = Depends(verify_admin)
 ):
-
-    users = (
-        db.query(Waitlist)
-        .order_by(Waitlist.id.desc())
-        .all()
-    )
+    users = db.query(Waitlist).order_by(Waitlist.id.desc()).all()
 
     return users
