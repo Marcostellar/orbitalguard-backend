@@ -19,6 +19,8 @@ def get_waitlist(db: Session = Depends(get_db)):
     users = db.query(Waitlist).order_by(Waitlist.id.desc()).all()
 
     return users
+
+
     existing = crud.get_email(db, data.email)
 
     if existing:
