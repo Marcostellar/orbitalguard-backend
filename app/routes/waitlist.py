@@ -3,23 +3,20 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.schemas import WaitlistCreate
+from app.models import Waitlist
 from app import crud
 
-router = APIRouter(prefix="/waitlist", tags=["Waitlist"])
+router = APIRouter(
+    prefix="/waitlist",
+    tags=["Waitlist"]
+)
 
 
 @router.post("/join")
-def join(data: WaitlistCreate,
-         db: Session = Depends(get_db)):
-from app.models import Waitlist
-
-@router.get("/")
-def get_waitlist(db: Session = Depends(get_db)):
-
-    users = db.query(Waitlist).order_by(Waitlist.id.desc()).all()
-
-    return users
-
+def join(
+    data: WaitlistCreate,
+    db: Session = Depends(get_db)
+):
 
     existing = crud.get_email(db, data.email)
 
@@ -40,3 +37,17 @@ def get_waitlist(db: Session = Depends(get_db)):
         "message": "Welcome aboard 🚀",
         "id": user.id
     }
+
+
+@router.get("/")
+def get_waitlist(
+    db: Session = Depends(get_db)
+):
+
+    users = (
+        db.query(Waitlist)
+        .order_by(Waitlist.id.desc())
+        .all()
+    )
+
+    return users
